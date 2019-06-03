@@ -1,1 +1,20 @@
-﻿
+﻿OnStart
+  Initalize listerns for sensor D and sensor E
+  Start CheckMonitors Thread.
+  
+On sensor D Activated and B Deactive
+  Inform Logs/Operator pump start
+  Start Pump
+ 
+ 
+On sensor E Deactived
+  Inform Logs/Operator pump stop
+  Stop pump 
+  
+While CheckMonitors
+  If a, b, c Activated
+    Log error 
+    Send Alarm to Operator
+  If B active and D active
+     Inform Logs/Operator pump stop
+     Stop pump 
