@@ -32,7 +32,7 @@ namespace QuartoLogic
                     {
                         foreach (var isTall in new[] { true, false })
                         {
-                            _piecesToPlay.Add(new QuartoPiece(isTall, hasHole, isDark, isRounded));
+                            _piecesToPlay.Add(new QuartoPiece( new bool[] { isTall, hasHole, isDark, isRounded }));
                         }
                     }
                 }
@@ -46,6 +46,8 @@ namespace QuartoLogic
             
             if(x <= _maxX && y <= _maxY && _board[x,y] == null)
             {
+                _selectedPeice.PlayedX = x;
+                _selectedPeice.PlayedY = y;
                 _board[x, y] = _selectedPeice;
                 return true;
             }
@@ -70,19 +72,69 @@ namespace QuartoLogic
             }
         }
 
-        public bool CheckIfWon()
+        public Dictionary<int,int> CheckIfWon()
         {
-            //Check Horizontal
-            for(int i= 0; i < 4; i++)
+            bool win = false;
+            var winLineList = new Dictionary<int,int>();
+            for(int j =0; j < _selectedPeice.Matching.Length; j++)
             {
+                //Check Horizontal
+                win = true;
+                winLineList = new Dictionary<int,int>();
+                for (int i = 0; i < _maxX; i++)
+                {
+                    if(_board[i, _selectedPeice.PlayedY] == null || _board[i, _selectedPeice.PlayedY].Matching[j] != _selectedPeice.Matching[j])
+                    {
+                        win = false;
+                        break;
+                    }
+                    winLineList.Add(i, _selectedPeice.PlayedY);
+                }
+                if (win) return winLineList;
+                //Check Vertical
+                win = true;
+                winLineList = new Dictionary<int,int>();
+                for (int i = 0; i < _maxY; i++)
+                {
+                    if (_board[_selectedPeice.PlayedX, i] == null || _board[_selectedPeice.PlayedX, i].Matching[j] != _selectedPeice.Matching[j])
+                    {
+                        win = false;
+                        break;
+                    }
+                    winLineList.Add(_selectedPeice.PlayedX, i);
+                }
+                if (win) return winLineList;
+                //Check Top right diagonal
+                win = true;
+                winLineList = new Dictionary<int,int>();
+                for (int i = 0; i < _maxX; i++)
+                {
+                    if (_board[_selectedPeice.PlayedY, i] == null || _board[i, i].Matching[j] != _selectedPeice.Matching[j])
+                    {
+                        win = false;
+                        break;
+                    }
+                    winLineList.Add( i, i);
+                }
+                if (win) return winLineList;
+                //Check Bottom right diagonal
+                win = true;
+                winLineList = new Dictionary<int,int>();
+                for (int i = 0; i < _maxX; i++)
+                {
+                    if (_board[_selectedPeice.PlayedY, i] == null || _board[3-i, 3-i].Matching[j] != _selectedPeice.Matching[j])
+                    {
+
+                        win = false;
+                        break;
+                    }
+                    winLineList.Add(3 - i, 3 - i);
+                }
+                if (win) return winLineList;
 
             }
-            //Check Vertical
-            for (int i = 0; i < 4; i++)
-            {
 
-            }
-            //Check diagonal
+            return new Dictionary<int,int>();
         }
     }
 }
